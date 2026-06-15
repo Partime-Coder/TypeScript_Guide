@@ -458,3 +458,63 @@ userName = undefined; // Valid
 * **Literal Types** → Multiple allowed values.
 * **Any** → No type checking.
 * **Undefined** → Absence of a value.
+
+### Unknown Type
+
+The `unknown` type can store any value, just like `any`.
+
+```ts id="g7yr7o"
+let value: unknown = "Sujal";
+```
+
+However, TypeScript does not allow you to directly use the value.
+
+```ts id="6u65xv"
+value.toUpperCase();
+```
+
+Error:
+
+```text id="a0b62o"
+Object is of type 'unknown'.
+```
+
+First, you must check the type:
+
+```ts id="v4bqq5"
+if (typeof value === "string") {
+  console.log(value.toUpperCase());
+}
+```
+
+Now TypeScript knows `value` is a string.
+
+---
+
+### Any vs Unknown
+
+```ts id="7sccy3"
+let anyValue: any = "Sujal";
+
+anyValue.toUpperCase(); // Allowed
+anyValue.toFixed(2);    // Also Allowed (even though it's wrong)
+```
+
+With `any`, TypeScript trusts you completely.
+
+```ts id="g5ejm5"
+let unknownValue: unknown = "Sujal";
+
+unknownValue.toUpperCase(); // Error
+```
+
+With `unknown`, TypeScript asks:
+
+> "First tell me what type this value is."
+
+### Quick Rule
+
+* `any` → No type checking.
+* `unknown` → Type checking required before use.
+* Prefer `unknown` over `any` when the type is not known.
+
