@@ -2751,3 +2751,500 @@ In modern TypeScript projects, Literal Types are often preferred because they ge
 * String enums are generally preferred over numeric enums.
 * Literal Types are often a modern alternative to enums.
 
+# 10. Object-Oriented Programming (OOP) in TypeScript
+
+Object-Oriented Programming (OOP) is a programming paradigm that organizes code using classes and objects.
+
+TypeScript extends JavaScript's class system with powerful type safety features such as:
+
+* Access Modifiers
+* Constructors
+* Inheritance
+* Encapsulation
+* Getters & Setters
+* Static Members
+* Abstract Classes
+* Composition
+
+---
+
+## Classes
+
+A class acts as a blueprint for creating objects.
+
+Example:
+
+```ts id="cl1"
+class User {
+    name: string;
+    age: number;
+
+    constructor(
+        name: string,
+        age: number
+    ) {
+        this.name = name;
+        this.age = age;
+    }
+}
+```
+
+Creating an object:
+
+```ts id="cl2"
+const user1 = new User(
+    "Sujal",
+    21
+);
+```
+
+Accessing properties:
+
+```ts id="cl3"
+user1.name = "Raj";
+```
+
+---
+
+## Access Modifiers
+
+TypeScript provides access modifiers to control visibility.
+
+### Public
+
+Public members can be accessed from anywhere.
+
+```ts id="cl4"
+class Game {
+    public name: string = "GTA";
+}
+```
+
+Usage:
+
+```ts id="cl5"
+const game = new Game();
+
+console.log(game.name);
+```
+
+Public is the default modifier.
+
+---
+
+## Private
+
+Private members can only be accessed inside the class.
+
+```ts id="cl6"
+class Game {
+    private creator: string =
+        "Someone";
+
+    reveal() {
+        return this.creator;
+    }
+}
+```
+
+Usage:
+
+```ts id="cl7"
+const game = new Game();
+
+game.reveal();
+```
+
+Invalid:
+
+```ts id="cl8"
+game.creator;
+```
+
+Error:
+
+```text id="cl9"
+Property 'creator' is private
+```
+
+Private data helps protect internal implementation details.
+
+---
+
+## Protected
+
+Protected members are accessible inside the class and its child classes.
+
+```ts id="cl10"
+class Shop {
+    protected name = "BMS";
+}
+```
+
+Child class:
+
+```ts id="cl11"
+class Branch extends Shop {
+    getName() {
+        return this.name;
+    }
+}
+```
+
+Usage:
+
+```ts id="cl12"
+new Branch().getName();
+```
+
+Difference:
+
+| Modifier  | Class | Child Class | Outside |
+| --------- | ----- | ----------- | ------- |
+| public    | ✅     | ✅           | ✅       |
+| protected | ✅     | ✅           | ❌       |
+| private   | ✅     | ❌           | ❌       |
+
+---
+
+## Parameter Properties
+
+TypeScript allows properties to be declared directly inside the constructor.
+
+Instead of:
+
+```ts id="cl13"
+class User {
+    bio: string;
+
+    constructor(bio: string) {
+        this.bio = bio;
+    }
+}
+```
+
+Use:
+
+```ts id="cl14"
+class User {
+    constructor(
+        public bio: string
+    ) {}
+}
+```
+
+This automatically creates and assigns the property.
+
+---
+
+## Readonly Properties
+
+Readonly properties can only be assigned once.
+
+Example:
+
+```ts id="cl15"
+class APIKey {
+    readonly key: string;
+
+    constructor(key: string) {
+        this.key = key;
+    }
+}
+```
+
+Usage:
+
+```ts id="cl16"
+const api = new APIKey("abc123");
+```
+
+Invalid:
+
+```ts id="cl17"
+api.key = "xyz";
+```
+
+Error:
+
+```text id="cl18"
+Cannot assign to 'key'
+because it is readonly
+```
+
+Readonly values are useful for IDs, tokens, and configuration values.
+
+---
+
+## Getters and Setters
+
+Getters and Setters act as controlled access points to data.
+
+Example:
+
+```ts id="cl19"
+class Balance {
+
+    private amount = 1000;
+
+    get balance() {
+        return this.amount;
+    }
+
+    set balance(
+        value: number
+    ) {
+
+        if (value < 0) {
+            throw new Error(
+                "Balance cannot be negative"
+            );
+        }
+
+        this.amount = value;
+    }
+}
+```
+
+Usage:
+
+```ts id="cl20"
+const b = new Balance();
+
+b.balance = 500;
+
+console.log(b.balance);
+```
+
+Benefits:
+
+* Validation
+* Encapsulation
+* Controlled updates
+
+---
+
+## Static Members
+
+Static members belong to the class itself, not individual objects.
+
+Example:
+
+```ts id="cl21"
+class User {
+
+    static appName =
+        "BMS Store";
+
+    constructor(
+        public bio: string
+    ) {}
+}
+```
+
+Access:
+
+```ts id="cl22"
+User.appName;
+```
+
+No object creation required.
+
+Invalid:
+
+```ts id="cl23"
+const user = new User("Hi");
+
+user.appName;
+```
+
+Error because static properties belong to the class.
+
+Common use cases:
+
+* Configuration
+* Utility Methods
+* Global Constants
+
+---
+
+## Inheritance
+
+Inheritance allows one class to reuse another class.
+
+Example:
+
+```ts id="cl24"
+class Shop {
+    protected name = "BMS";
+}
+
+class Branch extends Shop {
+
+    getName() {
+        return this.name;
+    }
+}
+```
+
+The child class automatically receives access to inherited members.
+
+---
+
+## Abstract Classes
+
+Abstract classes act as blueprints for other classes.
+
+They cannot be instantiated directly.
+
+Example:
+
+```ts id="cl25"
+abstract class Drink {
+
+    abstract make(): void;
+}
+```
+
+Child class:
+
+```ts id="cl26"
+class Lemonade extends Drink {
+
+    make() {
+        console.log("Lemon");
+    }
+}
+```
+
+Usage:
+
+```ts id="cl27"
+const drink =
+    new Lemonade();
+
+drink.make();
+```
+
+Invalid:
+
+```ts id="cl28"
+new Drink();
+```
+
+Error because abstract classes cannot create objects.
+
+---
+
+## Why Use Abstract Classes?
+
+They enforce a contract.
+
+Every child class must implement:
+
+```ts id="cl29"
+make()
+```
+
+otherwise TypeScript throws an error.
+
+---
+
+## Composition
+
+Composition means building classes using other classes.
+
+Instead of inheriting behavior, objects are combined together.
+
+Example:
+
+```ts id="cl30"
+class Heater {
+
+    heat() {
+        console.log(
+            "Heating water"
+        );
+    }
+}
+```
+
+```ts id="cl31"
+class Water {
+
+    constructor(
+        private heater: Heater
+    ) {}
+
+    makeTea() {
+        this.heater.heat();
+    }
+}
+```
+
+Usage:
+
+```ts id="cl32"
+const heater =
+    new Heater();
+
+const water =
+    new Water(heater);
+
+water.makeTea();
+```
+
+This relationship is often described as:
+
+> Has-A relationship
+
+while inheritance represents:
+
+> Is-A relationship
+
+---
+
+## Composition vs Inheritance
+
+### Inheritance
+
+```text id="cl33"
+Branch IS-A Shop
+```
+
+### Composition
+
+```text id="cl34"
+Water HAS-A Heater
+```
+
+Modern applications often prefer composition because it creates more flexible and reusable code.
+
+---
+
+## Summary
+
+| Feature        | Purpose                                |
+| -------------- | -------------------------------------- |
+| Class          | Blueprint for objects                  |
+| Constructor    | Initialize object data                 |
+| Public         | Accessible everywhere                  |
+| Private        | Accessible only inside class           |
+| Protected      | Accessible inside class and subclasses |
+| Readonly       | Cannot be changed after assignment     |
+| Getter         | Read data safely                       |
+| Setter         | Update data with validation            |
+| Static         | Belongs to the class itself            |
+| Inheritance    | Reuse behavior from another class      |
+| Abstract Class | Blueprint for subclasses               |
+| Composition    | Build classes from other classes       |
+
+### Key Takeaway
+
+* Classes create reusable object blueprints.
+* Access modifiers control visibility and protect data.
+* Getters and Setters provide controlled access to properties.
+* Static members belong to the class, not instances.
+* Abstract classes define contracts for subclasses.
+* Composition is often preferred over inheritance for building flexible applications.
+

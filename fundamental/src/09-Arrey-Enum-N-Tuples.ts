@@ -76,3 +76,12 @@ function getGame(type:gameType){
     console.log(type);
 }
 getGame(gameType.RPG)
+
+// bad practice but possible
+
+enum randomEnum {
+    ID = 1,
+    name = "sting"
+}
+
+// allow but consider bad practice 
