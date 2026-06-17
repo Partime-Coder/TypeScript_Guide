@@ -1455,3 +1455,393 @@ Readonly values help protect configuration data and constants from accidental ch
 * Optional properties allow missing values.
 * Readonly properties can be assigned once and cannot be modified later.
 * Interfaces and Types are similar, but interfaces are often preferred for object-oriented design.
+
+# 7. Objects & Utility Types
+
+Objects are one of the most commonly used data structures in TypeScript.
+
+TypeScript can automatically infer object types, but developers can also explicitly define object structures using custom types.
+
+This section covers:
+
+* Object Type Inference
+* Object Type Annotations
+* Custom Object Types
+* Structural Typing (Duck Typing)
+* Nested Object Types
+* Utility Types
+
+  * Partial
+  * Required
+  * Pick
+  * Omit
+
+---
+
+## Object Type Inference
+
+TypeScript automatically infers the type of an object based on its properties.
+
+Example:
+
+```ts id="5gt92a"
+const user = {
+    name: "Sujal",
+    age: 21,
+    isCool: true
+};
+```
+
+TypeScript infers:
+
+```ts id="7xk1jc"
+{
+    name: string;
+    age: number;
+    isCool: boolean;
+}
+```
+
+This process is called **Type Inference**.
+
+---
+
+## Object Type Annotations
+
+Sometimes we explicitly define the object's structure.
+
+```ts id="v6t30n"
+let person: {
+    name: string;
+    age: number;
+    isCool: boolean;
+};
+```
+
+Assignment:
+
+```ts id="w2tl6h"
+person = {
+    name: "Sujal",
+    age: 21,
+    isCool: true
+};
+```
+
+TypeScript ensures all required properties exist and have the correct types.
+
+---
+
+## Creating Reusable Object Types
+
+Instead of repeating object structures, we can create custom types.
+
+```ts id="5khzsm"
+type Human = {
+    name: string;
+    age: number;
+    traits: string[];
+};
+```
+
+Usage:
+
+```ts id="5w6r9m"
+const myself: Human = {
+    name: "Sujal",
+    age: 21,
+    traits: ["cool", "chill"]
+};
+```
+
+This improves readability and reusability.
+
+---
+
+## Structural Typing (Duck Typing)
+
+TypeScript follows **Structural Typing**.
+
+A value is considered valid if it contains the required properties, regardless of where it came from.
+
+Often called:
+
+> "If it looks like a duck and walks like a duck, it's a duck."
+
+Example:
+
+```ts id="w5lln3"
+type Bottle = {
+    liter: string;
+};
+```
+
+```ts id="6xjlwm"
+let smallBottle: Bottle = {
+    liter: "500ml"
+};
+```
+
+```ts id="zn3a2s"
+let bigBottle = {
+    liter: "1000ml",
+    material: "steel"
+};
+```
+
+Assignment:
+
+```ts id="rrx17q"
+smallBottle = bigBottle;
+```
+
+Valid because:
+
+```ts id="0n6jn7"
+bigBottle.liter
+```
+
+satisfies the minimum requirements of `Bottle`.
+
+Extra properties are ignored.
+
+---
+
+## Nested Object Types
+
+Object types can contain other object types.
+
+Example:
+
+```ts id="v9cksp"
+type Item = {
+    name: string;
+    quantity: number;
+};
+```
+
+```ts id="x4s46x"
+type Address = {
+    street: string;
+    pin: number;
+};
+```
+
+```ts id="fxsyls"
+type Order = {
+    id: string;
+    item: Item[];
+    address: Address;
+};
+```
+
+Usage:
+
+```ts id="vft8y3"
+const order: Order = {
+    id: "ORD001",
+    item: [
+        {
+            name: "Keyboard",
+            quantity: 1
+        }
+    ],
+    address: {
+        street: "Main Road",
+        pin: 410206
+    }
+};
+```
+
+Nested types help organize complex data structures.
+
+---
+
+# Utility Types
+
+TypeScript provides built-in utility types that transform existing types.
+
+---
+
+## Partial
+
+`Partial<T>` makes every property optional.
+
+Example:
+
+```ts id="mbjlwm"
+type Game = {
+    name: string;
+    age: number;
+};
+```
+
+```ts id="4u8euh"
+function update(data: Partial<Game>) {
+    console.log(data);
+}
+```
+
+Valid:
+
+```ts id="nyu0b7"
+update({ age: 13 });
+```
+
+Also valid:
+
+```ts id="n0g08e"
+update({ name: "Watch Dogs" });
+```
+
+Even this is valid:
+
+```ts id="dndn8j"
+update({});
+```
+
+Type becomes:
+
+```ts id="twzxkv"
+{
+    name?: string;
+    age?: number;
+}
+```
+
+Common use case:
+
+* Update APIs
+* Form updates
+* Patch requests
+
+---
+
+## Required
+
+`Required<T>` makes all properties mandatory.
+
+Example:
+
+```ts id="40c5th"
+function updateAll(data: Required<Game>) {
+    console.log(data);
+}
+```
+
+Valid:
+
+```ts id="p74u6d"
+updateAll({
+    name: "Watch Dogs 2",
+    age: 10
+});
+```
+
+Missing any property causes an error.
+
+It also converts optional properties into required ones.
+
+---
+
+## Pick
+
+`Pick<T, Keys>` selects specific properties from a type.
+
+Example:
+
+```ts id="zljlwm"
+function setName(data: Pick<Game, "name">) {
+    console.log(data);
+}
+```
+
+Usage:
+
+```ts id="e9rrf4"
+setName({
+    name: "Sleeping Dogs"
+});
+```
+
+Generated type:
+
+```ts id="2oq52r"
+{
+    name: string;
+}
+```
+
+Useful when only a small portion of a type is needed.
+
+---
+
+## Omit
+
+`Omit<T, Keys>` removes specific properties from a type.
+
+Example:
+
+```ts id="mzj0hx"
+function getAge(data: Omit<Game, "name">) {
+    console.log(data);
+}
+```
+
+Usage:
+
+```ts id="g9jqzt"
+getAge({
+    age: 42
+});
+```
+
+Generated type:
+
+```ts id="k1rhy4"
+{
+    age: number;
+}
+```
+
+Trying to pass `name` results in an error.
+
+```ts id="2eb7w9"
+getAge({
+    name: "GTA V"
+});
+```
+
+Error:
+
+```text id="e9t49n"
+'name' does not exist in type 'Omit<Game, "name">'
+```
+
+Common use case:
+
+* Remove sensitive fields
+* Exclude IDs
+* Create public versions of objects
+
+---
+
+## Utility Type Summary
+
+| Utility Type  | Purpose                       |
+| ------------- | ----------------------------- |
+| `Partial<T>`  | Makes all properties optional |
+| `Required<T>` | Makes all properties required |
+| `Pick<T, K>`  | Select specific properties    |
+| `Omit<T, K>`  | Remove specific properties    |
+
+---
+
+## Key Takeaway
+
+* TypeScript automatically infers object types.
+* Custom types make object structures reusable.
+* TypeScript uses Structural Typing (Duck Typing).
+* Nested types help model real-world data.
+* Utility Types allow existing types to be transformed without creating new ones manually.
+* `Partial`, `Required`, `Pick`, and `Omit` are among the most commonly used utility types in modern TypeScript applications.
