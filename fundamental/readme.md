@@ -3248,3 +3248,567 @@ Modern applications often prefer composition because it creates more flexible an
 * Abstract classes define contracts for subclasses.
 * Composition is often preferred over inheritance for building flexible applications.
 
+# 11. Interfaces & Generics
+
+Interfaces and Generics are two of the most important TypeScript features.
+
+**Interfaces** help define contracts for objects, classes, and functions.
+
+**Generics** allow code to work with multiple types while maintaining type safety.
+
+This section covers:
+
+* Interface Basics
+* Optional Properties
+* Readonly Properties
+* Function Interfaces
+* Method Interfaces
+* Index Signatures
+* Interface Merging
+* Interface Extension
+* Generic Functions
+* Multiple Generic Types
+* Generic Interfaces
+
+---
+
+# Interfaces
+
+An Interface defines the structure that an object must follow.
+
+Example:
+
+```ts id="i1"
+interface Game {
+    name: string;
+    price: number;
+    played?: boolean;
+}
+```
+
+Usage:
+
+```ts id="i2"
+const gta: Game = {
+    name: "GTA 5",
+    price: 1999
+};
+```
+
+The object must contain all required properties.
+
+---
+
+## Optional Properties
+
+Optional properties are marked using `?`.
+
+Example:
+
+```ts id="i3"
+interface Game {
+    name: string;
+    price: number;
+    played?: boolean;
+}
+```
+
+Valid:
+
+```ts id="i4"
+const gta: Game = {
+    name: "GTA 5",
+    price: 1999
+};
+```
+
+Also valid:
+
+```ts id="i5"
+const gta: Game = {
+    name: "GTA 5",
+    price: 1999,
+    played: true
+};
+```
+
+Optional properties may or may not exist.
+
+---
+
+## Readonly Properties
+
+Readonly properties can only be assigned once.
+
+Example:
+
+```ts id="i6"
+interface User {
+    readonly id: number;
+    name: string;
+}
+```
+
+Usage:
+
+```ts id="i7"
+const user: User = {
+    id: 1,
+    name: "Sujal"
+};
+```
+
+Invalid:
+
+```ts id="i8"
+user.id = 5;
+```
+
+Error:
+
+```text id="i9"
+Cannot assign to 'id'
+because it is a read-only property.
+```
+
+---
+
+## Function Interfaces
+
+Interfaces can describe function signatures.
+
+Example:
+
+```ts id="i10"
+interface PriceCalculate {
+    (price: number): number;
+}
+```
+
+Implementation:
+
+```ts id="i11"
+const apply50: PriceCalculate =
+    (price) => price * 0.5;
+```
+
+TypeScript ensures the function follows the defined contract.
+
+---
+
+## Method Interfaces
+
+Interfaces can also describe objects containing methods.
+
+Example:
+
+```ts id="i12"
+interface Machine {
+    start(): void;
+    stop(): void;
+}
+```
+
+Implementation:
+
+```ts id="i13"
+const teaMachine: Machine = {
+
+    start() {
+        console.log("start");
+    },
+
+    stop() {
+        console.log("stop");
+    }
+};
+```
+
+The object must implement all required methods.
+
+---
+
+## Index Signatures
+
+Index Signatures allow dynamic property names.
+
+Example:
+
+```ts id="i14"
+interface Rating {
+    [name: string]: number;
+}
+```
+
+Usage:
+
+```ts id="i15"
+const gameRates: Rating = {
+    gta: 5,
+    farcry: 7
+};
+```
+
+This means:
+
+```ts id="i16"
+property name → string
+property value → number
+```
+
+Common use cases:
+
+* Dictionaries
+* Dynamic API responses
+* Key-value maps
+
+> Index signatures are useful but can reduce type safety when overused.
+
+---
+
+## Interface Merging
+
+Interfaces with the same name automatically merge.
+
+Example:
+
+```ts id="i17"
+interface User {
+    name: string;
+}
+```
+
+```ts id="i18"
+interface User {
+    age: number;
+}
+```
+
+TypeScript merges them into:
+
+```ts id="i19"
+interface User {
+    name: string;
+    age: number;
+}
+```
+
+Usage:
+
+```ts id="i20"
+const user: User = {
+    name: "Sujal",
+    age: 32
+};
+```
+
+This feature is unique to interfaces.
+
+---
+
+## Interface Extension
+
+Interfaces can extend other interfaces.
+
+Example:
+
+```ts id="i21"
+interface A {
+    a: string;
+}
+```
+
+```ts id="i22"
+interface B {
+    b: string;
+}
+```
+
+```ts id="i23"
+interface C extends A, B {}
+```
+
+TypeScript creates:
+
+```ts id="i24"
+interface C {
+    a: string;
+    b: string;
+}
+```
+
+Usage:
+
+```ts id="i25"
+const obj: C = {
+    a: "hello",
+    b: "world"
+};
+```
+
+This allows interface reuse and composition.
+
+---
+
+# Generics
+
+Generics allow functions, interfaces, and classes to work with different types while preserving type safety.
+
+Without Generics:
+
+```ts id="g1"
+function wrapString(
+    item: string
+): string[] {
+    return [item];
+}
+```
+
+Only strings are allowed.
+
+Generics make the function reusable for any type.
+
+---
+
+## Generic Functions
+
+Example:
+
+```ts id="g2"
+function wrapInArray<T>(
+    item: T
+): T[] {
+    return [item];
+}
+```
+
+Usage:
+
+```ts id="g3"
+wrapInArray("Name");
+```
+
+Type:
+
+```ts id="g4"
+string[]
+```
+
+Usage:
+
+```ts id="g5"
+wrapInArray(32);
+```
+
+Type:
+
+```ts id="g6"
+number[]
+```
+
+Usage:
+
+```ts id="g7"
+wrapInArray({
+    name: "Martin",
+    age: 23
+});
+```
+
+Type:
+
+```ts id="g8"
+{
+    name: string;
+    age: number;
+}[]
+```
+
+TypeScript automatically infers the generic type.
+
+---
+
+## Multiple Generic Types
+
+Generics can accept multiple type parameters.
+
+Example:
+
+```ts id="g9"
+function pair<A, B>(
+    a: A,
+    b: B
+): [A, B] {
+
+    return [a, b];
+}
+```
+
+Usage:
+
+```ts id="g10"
+pair("hello", 123);
+```
+
+Result:
+
+```ts id="g11"
+[string, number]
+```
+
+Each generic parameter keeps its own type.
+
+---
+
+## Generic Interfaces
+
+Interfaces can also use Generics.
+
+Example:
+
+```ts id="g12"
+interface Box<T> {
+    content: T;
+}
+```
+
+Number box:
+
+```ts id="g13"
+const numberBox:
+    Box<number> = {
+        content: 18
+    };
+```
+
+String box:
+
+```ts id="g14"
+const stringBox:
+    Box<string> = {
+        content: "18"
+    };
+```
+
+Generated types:
+
+```ts id="g15"
+Box<number>
+```
+
+and
+
+```ts id="g16"
+Box<string>
+```
+
+The structure remains the same while the content type changes.
+
+---
+
+## Why Generics Matter
+
+Without Generics:
+
+```ts id="g17"
+function wrap(
+    item: any
+): any[] {
+    return [item];
+}
+```
+
+Problem:
+
+```ts id="g18"
+any
+```
+
+removes type safety.
+
+With Generics:
+
+```ts id="g19"
+function wrap<T>(
+    item: T
+): T[] {
+    return [item];
+}
+```
+
+TypeScript preserves the exact type.
+
+This provides:
+
+* Better IntelliSense
+* Better Autocomplete
+* Better Error Detection
+* Stronger Type Safety
+
+---
+
+## Real-World Uses of Generics
+
+Generics are heavily used in:
+
+### API Responses
+
+```ts id="g20"
+interface ApiResponse<T> {
+    data: T;
+    success: boolean;
+}
+```
+
+---
+
+### React State
+
+```ts id="g21"
+useState<string>()
+```
+
+---
+
+### Forms
+
+```ts id="g22"
+Form<UserData>
+```
+
+---
+
+### Collections
+
+```ts id="g23"
+Array<T>
+Promise<T>
+Map<K, V>
+```
+
+Many built-in TypeScript types are implemented using Generics.
+
+---
+
+## Summary
+
+| Feature                 | Purpose                           |
+| ----------------------- | --------------------------------- |
+| Interface               | Define object contracts           |
+| Optional Property (`?`) | Property may be omitted           |
+| Readonly                | Prevent reassignment              |
+| Function Interface      | Define function signatures        |
+| Method Interface        | Define object methods             |
+| Index Signature         | Dynamic object keys               |
+| Interface Merging       | Combine interfaces with same name |
+| Extends                 | Reuse interfaces                  |
+| Generic Function        | Reusable type-safe functions      |
+| Generic Interface       | Reusable type-safe interfaces     |
+
+### Key Takeaway
+
+* Interfaces define contracts for objects, methods, and functions.
+* Interfaces support extension and declaration merging.
+* Generics allow code to work with multiple types safely.
+* Generics preserve type information while remaining reusable.
+* Most modern TypeScript libraries rely heavily on Generics.
