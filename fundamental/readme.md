@@ -2244,3 +2244,510 @@ number[]
 * Optional and default parameters make functions more flexible.
 * Function type signatures allow functions to be treated like any other type.
 * Function type aliases help create reusable function contracts.
+
+# 9. Arrays, Tuples & Enums
+
+Arrays, Tuples, and Enums help organize and manage collections of data in TypeScript.
+
+This section covers:
+
+* Arrays
+* Readonly Arrays
+* Multi-Dimensional Arrays
+* Tuples
+* Readonly Tuples
+* Named Tuples
+* Enums
+* Numeric Enums
+* String Enums
+
+---
+
+## Arrays
+
+Arrays store multiple values of the same type.
+
+### String Array
+
+```ts id="j1m7ax"
+const gameList: string[] = [
+    "Far Cry 3",
+    "Nioh"
+];
+```
+
+Type:
+
+```ts id="a9hm8z"
+string[]
+```
+
+Only strings are allowed.
+
+---
+
+### Number Array
+
+```ts id="4ulx9g"
+const gamePrice: number[] = [
+    599,
+    2999
+];
+```
+
+Type:
+
+```ts id="q3n2g8"
+number[]
+```
+
+Only numbers are allowed.
+
+---
+
+### Generic Array Syntax
+
+TypeScript also provides a generic array syntax.
+
+```ts id="8u7m6q"
+const rating: Array<number> = [
+    4.5,
+    5.0
+];
+```
+
+Equivalent to:
+
+```ts id="z5h8wy"
+const rating: number[];
+```
+
+Both approaches are valid.
+
+---
+
+## Arrays of Objects
+
+Arrays can store custom object types.
+
+Example:
+
+```ts id="z8n3tb"
+type GameData = {
+    name: string;
+    price: number;
+    addon: {
+        name: string;
+        price: number;
+    }[];
+};
+```
+
+Usage:
+
+```ts id="ivv2ll"
+const data: GameData[] = [
+    {
+        name: "GTA",
+        price: 1999,
+        addon: [
+            {
+                name: "GTA Online",
+                price: 2999
+            }
+        ]
+    }
+];
+```
+
+Type:
+
+```ts id="phuxqx"
+GameData[]
+```
+
+Each array item must follow the `GameData` structure.
+
+---
+
+## Readonly Arrays
+
+Readonly arrays prevent modification after creation.
+
+Example:
+
+```ts id="d64y08"
+const cities: readonly string[] = [
+    "Panvel",
+    "Pune"
+];
+```
+
+Valid:
+
+```ts id="bkpwlo"
+console.log(cities);
+```
+
+Invalid:
+
+```ts id="tup88y"
+cities.push("Mumbai");
+```
+
+Error:
+
+```text id="04z9hk"
+Property 'push' does not exist on type 'readonly string[]'
+```
+
+Readonly arrays are useful for constant data.
+
+---
+
+## Multi-Dimensional Arrays
+
+Arrays can contain other arrays.
+
+Example:
+
+```ts id="8xvf0w"
+const table: number[][] = [
+    [1, 2, 3],
+    [4, 5, 6]
+];
+```
+
+Visual representation:
+
+```text id="ey5iqa"
+[
+ [1,2,3],
+ [4,5,6]
+]
+```
+
+Common use cases:
+
+* Tables
+* Grids
+* Matrix data
+* Board games
+
+---
+
+# Tuples
+
+Tuples are fixed-length arrays with fixed types and positions.
+
+Example:
+
+```ts id="crr06v"
+let gameTuple: [string, number];
+```
+
+Valid:
+
+```ts id="ohrl8m"
+gameTuple = ["Hue", 67];
+```
+
+Invalid:
+
+```ts id="q1tk5s"
+gameTuple = [67, "Hue"];
+```
+
+Error because the order matters.
+
+---
+
+## Optional Tuple Elements
+
+Tuple values can be optional.
+
+Example:
+
+```ts id="7a7vpm"
+let userTuple: [
+    string,
+    number,
+    boolean?
+];
+```
+
+Valid:
+
+```ts id="stgtmq"
+userTuple = ["Sujal", 21];
+```
+
+Also valid:
+
+```ts id="8zok7w"
+userTuple = ["Sujal", 21, true];
+```
+
+The last value is optional.
+
+---
+
+## Readonly Tuples
+
+Readonly tuples cannot be modified.
+
+Example:
+
+```ts id="rl1gr0"
+const location: readonly [
+    number,
+    number
+] = [24.55, 45.56];
+```
+
+Invalid:
+
+```ts id="oqfjlwm"
+location[0] = 50;
+```
+
+Error because the tuple is readonly.
+
+---
+
+## Named Tuples
+
+Named tuples improve readability.
+
+Example:
+
+```ts id="4zwtsd"
+const item: [
+    name: string,
+    price: number
+] = ["Bag", 446];
+```
+
+Instead of:
+
+```ts id="0p65nq"
+[string, number]
+```
+
+developers can immediately understand what each position represents.
+
+---
+
+# Enums
+
+Enums define a set of named constants.
+
+They make code easier to read and maintain.
+
+Example:
+
+```ts id="qyv14m"
+enum CupSize {
+    Small,
+    Medium,
+    Large
+}
+```
+
+Usage:
+
+```ts id="3nk8nn"
+const size = CupSize.Small;
+```
+
+---
+
+## Numeric Enums
+
+By default, TypeScript assigns numeric values starting from `0`.
+
+Example:
+
+```ts id="o4iut9"
+enum CupSize {
+    Small,
+    Medium,
+    Large
+}
+```
+
+Generated values:
+
+```text id="2n0br9"
+Small  = 0
+Medium = 1
+Large  = 2
+```
+
+---
+
+### Auto Increment
+
+Example:
+
+```ts id="v5qqjo"
+enum ErrorEnum {
+    Number = 100,
+    Name,
+    Age
+}
+```
+
+Generated values:
+
+```text id="ktg16o"
+Number = 100
+Name   = 101
+Age    = 102
+```
+
+After the first numeric value, TypeScript automatically increments the rest.
+
+---
+
+## String Enums
+
+String enums are generally preferred because they are easier to debug.
+
+Example:
+
+```ts id="gm1mqo"
+enum GameType {
+    RPG = "rpg",
+    SIMULATION = "simulation"
+}
+```
+
+Usage:
+
+```ts id="tpk8i9"
+function getGame(type: GameType) {
+    console.log(type);
+}
+
+getGame(GameType.RPG);
+```
+
+Output:
+
+```text id="4xaw2w"
+rpg
+```
+
+String enums are more descriptive than numeric values.
+
+---
+
+## Mixed Enums (Not Recommended)
+
+TypeScript allows mixing numbers and strings.
+
+Example:
+
+```ts id="x3c3kl"
+enum RandomEnum {
+    ID = 1,
+    Name = "string"
+}
+```
+
+This is valid TypeScript.
+
+However, it is generally considered bad practice because it creates inconsistent enum values.
+
+Prefer:
+
+```ts id="jlwmjp"
+All Numbers
+```
+
+or
+
+```ts id="yidtyn"
+All Strings
+```
+
+for better readability and maintainability.
+
+---
+
+## Arrays vs Tuples
+
+| Feature            | Array             | Tuple              |
+| ------------------ | ----------------- | ------------------ |
+| Length             | Variable          | Fixed              |
+| Order Matters      | No                | Yes                |
+| Types Per Position | Same Type Usually | Fixed Types        |
+| Example            | `string[]`        | `[string, number]` |
+
+Example:
+
+```ts id="m7a7b3"
+const names: string[] = [
+    "Sujal",
+    "Rahul"
+];
+```
+
+```ts id="3rr0uw"
+const user: [
+    string,
+    number
+] = [
+    "Sujal",
+    21
+];
+```
+
+---
+
+## Enum vs Literal Types
+
+Enums:
+
+```ts id="0lqvsh"
+enum GameType {
+    RPG = "rpg",
+    SIMULATION = "simulation"
+}
+```
+
+Literal Types:
+
+```ts id="aq6g62"
+type GameType =
+    | "rpg"
+    | "simulation";
+```
+
+In modern TypeScript projects, Literal Types are often preferred because they generate no extra JavaScript code.
+
+---
+
+## Summary
+
+| Feature        | Purpose                  |
+| -------------- | ------------------------ |
+| `string[]`     | Array of strings         |
+| `number[]`     | Array of numbers         |
+| `readonly`     | Prevent modifications    |
+| `[][]`         | Multi-dimensional arrays |
+| Tuple          | Fixed-length typed array |
+| Readonly Tuple | Immutable tuple          |
+| Named Tuple    | Self-documenting tuple   |
+| Enum           | Named constant values    |
+
+### Key Takeaway
+
+* Arrays store collections of values.
+* Tuples store values with fixed positions and types.
+* Readonly arrays and tuples prevent accidental changes.
+* Enums provide named constants for predefined values.
+* String enums are generally preferred over numeric enums.
+* Literal Types are often a modern alternative to enums.
+
