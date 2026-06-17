@@ -1159,3 +1159,299 @@ Execution ends immediately because an exception is thrown.
 * **Any** removes TypeScript's protection and should be avoided when possible.
 * **Never** represents unreachable code paths and functions that never return.
 * Use these advanced types carefully to maintain type safety in large applications.
+
+# 6. Interfaces, Classes & Object Type Composition
+
+So far, we have used `type` aliases to define custom object structures. TypeScript also provides another way to define object shapes called **Interfaces**.
+
+Interfaces are commonly used with classes and object-oriented programming patterns.
+
+This section covers:
+
+* Interfaces
+* Classes and `implements`
+* Type vs Interface
+* Intersection Types (`&`)
+* Optional Properties (`?`)
+* Readonly Properties (`readonly`)
+
+---
+
+## Custom Types
+
+A custom object type can be created using the `type` keyword.
+
+```ts id="c3w8y9"
+type Example = {
+    name: string;
+    age: number;
+};
+```
+
+Usage:
+
+```ts id="3j3mh8"
+function forExample(data: Example) {
+    return data;
+}
+```
+
+This ensures that the passed object contains all required properties.
+
+---
+
+## Classes and Implements
+
+Classes can enforce a structure using the `implements` keyword.
+
+```ts id="dbzxv3"
+type Game = {
+    name: string;
+    releaseDate: number;
+    played: boolean;
+};
+```
+
+Incorrect implementation:
+
+```ts id="7gv1e5"
+class GameClass implements Game {}
+```
+
+Error:
+
+```text id="vhdlhz"
+Class 'GameClass' incorrectly implements type 'Game'.
+```
+
+The class must contain every required property.
+
+Correct implementation:
+
+```ts id="i8lqwp"
+class GameClass implements Game {
+    name = "GTA V";
+    releaseDate = 2013;
+    played = true;
+}
+```
+
+TypeScript now confirms that the class satisfies the `Game` structure.
+
+---
+
+## Why Interfaces Exist
+
+Interfaces are another way to describe object structures.
+
+Example:
+
+```ts id="1kyq6r"
+interface GameType {
+    type: "open world" | "RPG";
+}
+```
+
+Used with classes:
+
+```ts id="lyjixm"
+class TypeClass implements GameType {
+    type: "open world" | "RPG" = "open world";
+}
+```
+
+This is one of the most common uses of interfaces.
+
+---
+
+## Type vs Interface
+
+Both can describe object structures.
+
+### Type
+
+```ts id="y9zx36"
+type User = {
+    name: string;
+};
+```
+
+### Interface
+
+```ts id="fhz75v"
+interface User {
+    name: string;
+}
+```
+
+For basic objects, both behave very similarly.
+
+### General Rule
+
+Use:
+
+```ts id="lkby58"
+interface
+```
+
+when designing object contracts or classes.
+
+Use:
+
+```ts id="h0cw4y"
+type
+```
+
+for unions, intersections, and advanced type compositions.
+
+---
+
+## Intersection Types
+
+Intersection types combine multiple object types into one.
+
+Syntax:
+
+```ts id="vjlwm9"
+type Combined = TypeA & TypeB;
+```
+
+Example:
+
+```ts id="xy0n6r"
+type GameName = {
+    name: string;
+};
+
+type GameAge = {
+    age: number;
+};
+
+type GameAllType = GameName & GameAge;
+```
+
+Usage:
+
+```ts id="92c5af"
+const gtaV: GameAllType = {
+    name: "GTA V",
+    age: 13
+};
+```
+
+The object must satisfy both types.
+
+Visual representation:
+
+```text id="ucd1jy"
+GameName
+    +
+GameAge
+    =
+GameAllType
+```
+
+---
+
+## Optional Properties
+
+Sometimes a property is not required.
+
+Use:
+
+```ts id="e22p39"
+?
+```
+
+Example:
+
+```ts id="7q0e3q"
+type UserData = {
+    name: string;
+    bio?: string;
+};
+```
+
+Valid:
+
+```ts id="4b9vut"
+const user1: UserData = {
+    name: "Sujal"
+};
+```
+
+Also valid:
+
+```ts id="f3i6uz"
+const user2: UserData = {
+    name: "Sujal",
+    bio: "Frontend Developer"
+};
+```
+
+The property becomes optional.
+
+---
+
+## Readonly Properties
+
+A readonly property can be assigned once but cannot be modified later.
+
+Example:
+
+```ts id="h1p7wq"
+type Config = {
+    readonly appName: string;
+    version: 1;
+};
+```
+
+Usage:
+
+```ts id="qj7mna"
+const config: Config = {
+    appName: "BMS Store",
+    version: 1
+};
+```
+
+Access:
+
+```ts id="95f0dh"
+console.log(config.appName);
+```
+
+Modification:
+
+```ts id="80w9gs"
+config.appName = "BMS Blog";
+```
+
+Error:
+
+```text id="mbj9ee"
+Cannot assign to 'appName' because it is a read-only property.
+```
+
+Readonly values help protect configuration data and constants from accidental changes.
+
+---
+
+## Summary
+
+| Feature      | Purpose                             |
+| ------------ | ----------------------------------- |
+| `interface`  | Define object contracts             |
+| `implements` | Force classes to follow a structure |
+| `&`          | Combine multiple types              |
+| `?`          | Optional property                   |
+| `readonly`   | Prevent property reassignment       |
+
+### Key Takeaway
+
+* Interfaces define object structures and are commonly used with classes.
+* Classes can use `implements` to enforce a contract.
+* Intersection types combine multiple object types.
+* Optional properties allow missing values.
+* Readonly properties can be assigned once and cannot be modified later.
+* Interfaces and Types are similar, but interfaces are often preferred for object-oriented design.
