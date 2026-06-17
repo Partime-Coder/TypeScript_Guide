@@ -3812,3 +3812,403 @@ Many built-in TypeScript types are implemented using Generics.
 * Generics allow code to work with multiple types safely.
 * Generics preserve type information while remaining reusable.
 * Most modern TypeScript libraries rely heavily on Generics.
+
+# 12. Working with APIs (Fetch & Axios)
+
+Most modern applications communicate with APIs to fetch or send data.
+
+TypeScript helps ensure that API responses match the expected structure, reducing runtime errors and improving developer experience.
+
+This section covers:
+
+* Fetch API
+* Axios
+* Typing API Responses
+* Error Handling
+* AxiosResponse
+* Axios Error Detection
+
+---
+
+## Creating Response Types
+
+Before making API calls, define the expected response structure.
+
+Example:
+
+```ts
+interface Todo {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
+```
+
+This ensures TypeScript knows what data the API should return.
+
+---
+
+# Fetch API
+
+The Fetch API is built into modern browsers and Node.js.
+
+Basic request:
+
+```ts
+const response = await fetch(url);
+```
+
+However, TypeScript does not automatically know the shape of the JSON response.
+
+---
+
+## Fetch with Type Safety
+
+Example:
+
+```ts
+interface Todo {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
+
+const fetchData = async () => {
+    try {
+
+        const response = await fetch(
+            "https://jsonplaceholder.typicode.com/todos/1"
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `HTTP Error ${response.status}`
+            );
+        }
+
+        const data: Todo =
+            await response.json();
+
+        console.log(data);
+
+    } catch (error) {
+
+        if (error instanceof Error) {
+            console.log(error.message);
+        }
+
+        console.log(error);
+    }
+};
+```
+
+---
+
+## Why Check `response.ok`?
+
+Fetch only throws errors for network failures.
+
+It does **not** automatically throw errors for:
+
+```text
+404 Not Found
+500 Internal Server Error
+401 Unauthorized
+```
+
+Therefore we manually check:
+
+```ts
+if (!response.ok) {
+    throw new Error(...);
+}
+```
+
+---
+
+## Error Handling with Fetch
+
+The catch block receives an `unknown` value.
+
+Example:
+
+```ts
+catch (error) {
+    if (error instanceof Error) {
+        console.log(error.message);
+    }
+}
+```
+
+TypeScript requires type narrowing before accessing properties.
+
+---
+
+# Axios
+
+Axios is a popular HTTP client library.
+
+Installation:
+
+```bash
+npm install axios
+```
+
+Import:
+
+```ts
+import axios from "axios";
+```
+
+---
+
+## Type-Only Imports
+
+When importing types, use:
+
+```ts
+import type { AxiosResponse } from "axios";
+```
+
+Example:
+
+```ts
+import axios from "axios";
+import type { AxiosResponse } from "axios";
+```
+
+Using `type` tells TypeScript:
+
+> This import is only used during type checking and should not exist in generated JavaScript.
+
+---
+
+## Axios with Type Safety
+
+Example:
+
+```ts
+interface Todo {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
+}
+
+const axiosData = async () => {
+
+    const response:
+        AxiosResponse<Todo> =
+        await axios.get(
+            "https://jsonplaceholder.typicode.com/todos/1"
+        );
+
+    console.log(response.data);
+};
+```
+
+Response type:
+
+```ts
+AxiosResponse<Todo>
+```
+
+Meaning:
+
+```ts
+response.data
+```
+
+is automatically typed as:
+
+```ts
+Todo
+```
+
+---
+
+## Better Axios Generic Syntax
+
+A more common approach is:
+
+```ts
+const response =
+    await axios.get<Todo>(url);
+```
+
+Example:
+
+```ts
+const response =
+    await axios.get<Todo>(
+        "https://jsonplaceholder.typicode.com/todos/1"
+    );
+```
+
+TypeScript automatically infers:
+
+```ts
+response.data
+```
+
+as:
+
+```ts
+Todo
+```
+
+This is usually cleaner than manually typing `AxiosResponse<T>`.
+
+---
+
+## Axios Error Handling
+
+Example:
+
+```ts
+try {
+
+} catch (error) {
+
+    if (
+        axios.isAxiosError(error)
+    ) {
+        console.log(
+            error.message
+        );
+    }
+}
+```
+
+Why?
+
+Because TypeScript does not know whether the caught value is actually an Axios error.
+
+The helper:
+
+```ts
+axios.isAxiosError(error)
+```
+
+acts as a type guard.
+
+---
+
+## Accessing Axios Error Responses
+
+Example:
+
+```ts
+catch (error) {
+
+    if (
+        axios.isAxiosError(error)
+    ) {
+
+        console.log(
+            error.response
+        );
+    }
+}
+```
+
+Common properties:
+
+```ts
+error.response?.status
+error.response?.data
+error.message
+```
+
+Useful for handling API failures.
+
+---
+
+## Fetch vs Axios
+
+| Feature              | Fetch   | Axios           |
+| -------------------- | ------- | --------------- |
+| Built-in             | ✅       | ❌               |
+| JSON Parsing         | Manual  | Automatic       |
+| Error Handling       | Manual  | Better Defaults |
+| Request Cancellation | Limited | Easier          |
+| Interceptors         | ❌       | ✅               |
+| TypeScript Support   | Good    | Excellent       |
+
+---
+
+## Example Comparison
+
+### Fetch
+
+```ts
+const response =
+    await fetch(url);
+
+const data =
+    await response.json();
+```
+
+### Axios
+
+```ts
+const response =
+    await axios.get(url);
+
+const data =
+    response.data;
+```
+
+Axios automatically parses JSON responses.
+
+---
+
+## Common Real-World Pattern
+
+```ts
+interface ApiResponse<T> {
+    data: T;
+    success: boolean;
+}
+```
+
+Usage:
+
+```ts
+const response =
+    await axios.get<
+        ApiResponse<Todo>
+    >(url);
+```
+
+This pattern is commonly used in:
+
+* React Applications
+* Next.js Projects
+* Express APIs
+* Backend Services
+
+---
+
+## Summary
+
+| Feature                | Purpose                   |
+| ---------------------- | ------------------------- |
+| `fetch()`              | Built-in browser API      |
+| `response.ok`          | Check HTTP success        |
+| `AxiosResponse<T>`     | Typed Axios response      |
+| `axios.get<T>()`       | Generic Axios request     |
+| `instanceof Error`     | Safe fetch error handling |
+| `axios.isAxiosError()` | Safe Axios error handling |
+| `import type`          | Type-only imports         |
+
+### Key Takeaway
+
+* Always create interfaces for API responses.
+* Use `instanceof Error` when handling Fetch errors.
+* Use `axios.isAxiosError()` when handling Axios errors.
+* Prefer `axios.get<T>()` for cleaner generic typing.
+* TypeScript helps catch API response mismatches before runtime.
+* Strong typing makes API integration safer and easier to maintain.
