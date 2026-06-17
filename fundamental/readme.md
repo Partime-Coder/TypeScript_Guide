@@ -1845,3 +1845,402 @@ Common use case:
 * Nested types help model real-world data.
 * Utility Types allow existing types to be transformed without creating new ones manually.
 * `Partial`, `Required`, `Pick`, and `Omit` are among the most commonly used utility types in modern TypeScript applications.
+
+# 8. Functions & Function Types
+
+Functions are one of the most important building blocks in TypeScript.
+
+TypeScript allows developers to define types for:
+
+* Function Parameters
+* Return Values
+* Optional Parameters
+* Function Expressions
+* Function Type Signatures
+
+By typing functions, TypeScript can catch errors before the code runs.
+
+---
+
+## Function Parameters
+
+Parameters can be given explicit types.
+
+Example:
+
+```ts
+function addProduct(product: string, quantity: number) {
+    console.log(
+        `product name: ${product} how many ${quantity}`
+    );
+}
+```
+
+Usage:
+
+```ts
+addProduct("game", 2);
+```
+
+Valid because:
+
+```ts
+product  → string
+quantity → number
+```
+
+Incorrect:
+
+```ts
+addProduct("game", "2");
+```
+
+Error:
+
+```text
+Argument of type 'string' is not assignable to parameter of type 'number'.
+```
+
+---
+
+## Return Types
+
+Functions can explicitly define what type they return.
+
+Example:
+
+```ts
+function getPrice(): number {
+    return 1000;
+}
+```
+
+The return type:
+
+```ts
+number
+```
+
+means the function must always return a number.
+
+Invalid:
+
+```ts
+function getPrice(): number {
+    return "1000";
+}
+```
+
+Error:
+
+```text
+Type 'string' is not assignable to type 'number'.
+```
+
+---
+
+## Void Return Type
+
+Some functions perform actions but do not return a value.
+
+Example:
+
+```ts
+function hello(): void {
+    console.log("hello");
+}
+```
+
+The `void` type means:
+
+> This function does not return anything useful.
+
+Usage:
+
+```ts
+hello();
+```
+
+Common examples:
+
+* Logging
+* Updating UI
+* Sending requests
+* Triggering side effects
+
+---
+
+## Type Inference for Return Values
+
+TypeScript can automatically infer return types.
+
+Example:
+
+```ts
+function getDiscount() {
+    return 20;
+}
+```
+
+TypeScript infers:
+
+```ts
+function getDiscount(): number
+```
+
+Because the function returns a number.
+
+For simple functions, explicit return types are often unnecessary.
+
+---
+
+## Optional Parameters
+
+Parameters can be marked as optional using `?`.
+
+Example:
+
+```ts
+function greet(name?: string) {
+    return `Hello ${name}`;
+}
+```
+
+Valid:
+
+```ts
+greet();
+greet("Sujal");
+```
+
+TypeScript treats:
+
+```ts
+name?: string
+```
+
+as:
+
+```ts
+name: string | undefined
+```
+
+---
+
+## Default Parameters
+
+A parameter can have a default value.
+
+Example:
+
+```ts
+function greet(name: string = "Guest") {
+    return `Hello ${name}`;
+}
+```
+
+Usage:
+
+```ts
+greet();
+```
+
+Output:
+
+```text
+Hello Guest
+```
+
+Usage:
+
+```ts
+greet("Sujal");
+```
+
+Output:
+
+```text
+Hello Sujal
+```
+
+Default values remove the need for manual checks.
+
+---
+
+## Object Parameters
+
+Functions can receive objects.
+
+Example:
+
+```ts
+type User = {
+    name: string;
+    age: number;
+};
+```
+
+```ts
+function createUser(user: User) {
+    return user;
+}
+```
+
+Usage:
+
+```ts
+createUser({
+    name: "Sujal",
+    age: 21
+});
+```
+
+TypeScript validates the entire object structure.
+
+---
+
+## Function Type Signatures
+
+Functions themselves can have types.
+
+Example:
+
+```ts
+let calculate: (a: number, b: number) => number;
+```
+
+Assignment:
+
+```ts
+calculate = function (a, b) {
+    return a + b;
+};
+```
+
+Valid because:
+
+```ts
+(number, number) => number
+```
+
+matches the expected function type.
+
+---
+
+## Type Alias for Functions
+
+Function types can be reused using type aliases.
+
+Example:
+
+```ts
+type MathOperation = (
+    a: number,
+    b: number
+) => number;
+```
+
+Usage:
+
+```ts
+const add: MathOperation = (a, b) => {
+    return a + b;
+};
+```
+
+```ts
+const multiply: MathOperation = (a, b) => {
+    return a * b;
+};
+```
+
+Both functions follow the same contract.
+
+---
+
+## Arrow Functions
+
+Arrow functions can also be typed.
+
+Example:
+
+```ts
+const getTax = (
+    price: number
+): number => {
+    return price * 0.18;
+};
+```
+
+Usage:
+
+```ts
+getTax(1000);
+```
+
+Return type:
+
+```ts
+number
+```
+
+---
+
+## Rest Parameters
+
+Functions can accept multiple values using rest parameters.
+
+Example:
+
+```ts
+function total(...numbers: number[]) {
+    return numbers.reduce(
+        (sum, num) => sum + num,
+        0
+    );
+}
+```
+
+Usage:
+
+```ts
+total(10, 20, 30);
+```
+
+Result:
+
+```text
+60
+```
+
+Type:
+
+```ts
+number[]
+```
+
+---
+
+## Summary
+
+| Feature                   | Purpose                       |
+| ------------------------- | ----------------------------- |
+| Parameter Types           | Define allowed argument types |
+| Return Types              | Define returned value type    |
+| `void`                    | No meaningful return value    |
+| Optional Parameters (`?`) | Parameter may be omitted      |
+| Default Parameters        | Provide fallback values       |
+| Function Type Signatures  | Type functions themselves     |
+| Type Alias Functions      | Reusable function contracts   |
+| Rest Parameters           | Accept multiple arguments     |
+
+---
+
+## Key Takeaway
+
+* Functions can have typed parameters and return values.
+* TypeScript validates arguments passed to functions.
+* `void` is used when a function does not return anything useful.
+* Optional and default parameters make functions more flexible.
+* Function type signatures allow functions to be treated like any other type.
+* Function type aliases help create reusable function contracts.
